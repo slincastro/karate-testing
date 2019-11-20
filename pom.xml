@@ -16,6 +16,8 @@
 
 	<properties>
 		<java.version>1.8</java.version>
+		<gatling.version>3.3.1</gatling.version>
+		<karate.version>0.9.4</karate.version>
 	</properties>
 
 	<dependencies>
@@ -38,13 +40,19 @@
 		<dependency>
 			<groupId>com.intuit.karate</groupId>
 			<artifactId>karate-apache</artifactId>
-			<version>0.9.4</version>
+			<version>${karate.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.intuit.karate</groupId>
 			<artifactId>karate-junit5</artifactId>
-			<version>0.9.4</version>
+			<version>${karate.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.intuit.karate</groupId>
+			<artifactId>karate-gatling</artifactId>
+			<version>${karate.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -55,7 +63,17 @@
 		<dependency>
 			<groupId>io.gatling.highcharts</groupId>
 			<artifactId>gatling-charts-highcharts</artifactId>
-			<version>3.3.1</version>
+			<version>${gatling.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>io.gatling</groupId>
+			<artifactId>gatling-app</artifactId>
+			<version>${gatling.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>io.gatling</groupId>
+			<artifactId>gatling-recorder</artifactId>
+			<version>${gatling.version}</version>
 		</dependency>
 	</dependencies>
 
@@ -79,9 +97,46 @@
 				<version>2.22.2</version>
 			</plugin>
 			<plugin>
+				<groupId>net.alchim31.maven</groupId>
+				<artifactId>scala-maven-plugin</artifactId>
+				<version>3.4.4</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>compile</goal>
+							<goal>testCompile</goal>
+						</goals>
+						<configuration>
+							<args>
+								<arg>-Jbackend:GenBCode</arg>
+								<arg>-Jdelambdafy:method</arg>
+								<arg>-target:jvm-1.8</arg>
+								<arg>-deprecation</arg>
+								<arg>-feature</arg>
+								<arg>-unchecked</arg>
+								<arg>-language:implicitConversions</arg>
+								<arg>-language:postfixOps</arg>
+							</args>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
 				<groupId>io.gatling</groupId>
 				<artifactId>gatling-maven-plugin</artifactId>
-				<version>3.0.5</version>
+				<version>3.0.1</version>
+				<configuration>
+					<disableCompiler>true</disableCompiler>
+					<skip>${skipTests}</skip>
+				</configuration>
+				<executions>
+					<execution>
+						<phase>test</phase>
+						<goals>
+							<goal>test</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>

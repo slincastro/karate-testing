@@ -1,23 +1,24 @@
-import io.gatling.core.Predef._ // 2
-import io.gatling.http.Predef._
+package slin.castro.testing.karatetesting
+
+import com.intuit.karate.gatling.PreDef._
+import io.gatling.core.Predef._
 import scala.concurrent.duration._
 
-class BasicSimulation extends Simulation { // 3
 
-  val httpProtocol = http // 4
-    .baseUrl("http://computer-database.gatling.io") // 5
-    .acceptHeader("text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8") // 6
-    .doNotTrackHeader("1")
-    .acceptLanguageHeader("en-US,en;q=0.5")
-    .acceptEncodingHeader("gzip, deflate")
-    .userAgentHeader("Mozilla/5.0 (Windows NT 5.1; rv:31.0) Gecko/20100101 Firefox/31.0")
+class ConferenceLoadTest extends Simulation {
 
-  val scn = scenario("BasicSimulation") // 7
-    .exec(http("http://localhost:5656/api/v1/sessions") // 8
-      .get("/")) // 9
-    .pause(5) // 10
+  val nbUsers = Integer.parseInt(System.getProperty("users", "1200"))
+  val duration = Integer.parseInt(System.getProperty("duration","160"))
 
-  setUp( // 11
-    scn.inject(atOnceUsers(1)) // 12
-  ).protocols(httpProtocol) // 13
+  val protocol = karateProtocol(
+    "sessions" -> pauseFor("get" -> 25)
+  )
+
+  protocol.nameResolver = (req, ctx) => req.getHeader("karate-name")
+
+  val create = scenario("ListSessions").exec(karateFeature("classpath:slin/castro/testing/karatetesting/sample.feature"))
+
+  setUp(
+    create.inject(rampUsers(nbUsers) during (duration seconds)).protocols(protocol),
+  )
 }

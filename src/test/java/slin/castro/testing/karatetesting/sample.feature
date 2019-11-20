@@ -1,7 +1,7 @@
 Feature: sample
 
   @Conference
-  Scenario: when i get sessions the response not be empty
+  Scenario: ListSessions
     Given url 'http://localhost:5656/api/v1/sessions'
     When method get
     Then status 200
