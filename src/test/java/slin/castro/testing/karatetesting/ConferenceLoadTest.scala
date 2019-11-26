@@ -7,8 +7,8 @@ import scala.concurrent.duration._
 
 class ConferenceLoadTest extends Simulation {
 
-  val nbUsers = Integer.parseInt(System.getProperty("users", "1200"))
-  val duration = Integer.parseInt(System.getProperty("duration","160"))
+  val nbUsers = Integer.parseInt(System.getProperty("users", "200"))
+  val duration = Integer.parseInt(System.getProperty("duration","30"))
 
   val protocol = karateProtocol(
     "sessions" -> pauseFor("get" -> 25)
